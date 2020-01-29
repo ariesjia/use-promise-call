@@ -1,0 +1,46 @@
+{
+  "name": "use-promise-call",
+  "version": "0.0.2",
+  "description": "Simple and complete Riot testing utilities that encourage good testing practices.",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "node ./build/build.js",
+    "commit": "npx git-cz",
+    "test": "jest --config test/unit/jest.config.js --no-cache"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ariesjia/use-promise-call.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ariesjia/use-promise-call/issues"
+  },
+  "homepage": "https://github.com/ariesjia/use-promise-call#readme",
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^2.1.0",
+    "@testing-library/react": "^9.4.0",
+    "@types/jest": "^24.0.18",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "hooks-test-util": "^1.1.1",
+    "jest": "^24.9.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-testing-library": "^8.0.1",
+    "riot-jest-transformer": "^6.0.4",
+    "rollup": "^1.23.1",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-terser": "^5.1.2",
+    "rollup-plugin-typescript2": "^0.24.3",
+    "rollup-plugin-uglify": "^6.0.3",
+    "ts-jest": "^24.1.0",
+    "typescript": "^3.6.3"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0"
+  }
+}
