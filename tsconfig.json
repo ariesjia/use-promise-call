@@ -7,6 +7,7 @@
     "declaration": true,
     "pretty": true,
     "rootDir": "src",
+    "esModuleInterop": true,
     "sourceMap": false,
     "strict": true,
     "noUnusedLocals": false,

@@ -1,4 +1,4 @@
-import React  from "react";
+import React from "react";
 import render, { act } from 'hooks-test-util'
 import usePromiseCall from '../index'
 
@@ -7,7 +7,7 @@ function flushPromises() {
 }
 
 describe("usePromiseCall test",() => {
-  it('should update loading status when excute promise method', async () => {
+  it('should update loading status when component mount', async () => {
     const query = jest.fn().mockImplementation(() => Promise.resolve())
     const { container } = render(() => {
       return usePromiseCall(
@@ -19,6 +19,7 @@ describe("usePromiseCall test",() => {
     await act(async () => {
       await flushPromises();
     })
+    expect(query).toBeCalledWith('id');
     expect(container.hook.loading).toBe(false)
   })
   it('should set data when promise success', async () => {
@@ -54,5 +55,26 @@ describe("usePromiseCall test",() => {
     })
     expect(container.hook.data).toBe(null)
     expect(container.hook.error).toBe(result)
+  })
+  it('should set loading and trigger promise when excute reload method', async () => {
+    const result = {
+      errorCode: '00100'
+    }
+    const query = jest.fn().mockImplementation(() => Promise.resolve(result))
+    const { container } = render(() => {
+      return usePromiseCall(
+        query,
+        ['id']
+      )
+    })
+    await act(async () => {
+      await flushPromises();
+    })
+    expect(container.hook.loading).toBe(false)
+    act(() => {
+      container.hook.reload()
+    })
+    expect(container.hook.loading).toBe(true)
+    expect(query).toBeCalledTimes(2);
   })
 })
