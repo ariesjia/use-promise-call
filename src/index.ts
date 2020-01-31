@@ -6,8 +6,8 @@ export interface usePromiseCallOptions {
 }
 
 const usePromiseCall = <T = any, K = any>(
-  customerQuery: (...args: any[]) => Promise<any>,
-  requestQuery?: any,
+  asyncMethod: (...args: any[]) => Promise<any>,
+  parameters?: any,
   options?: usePromiseCallOptions
 ) => {
   const { interval = 100 } = options || {}
@@ -41,7 +41,7 @@ const usePromiseCall = <T = any, K = any>(
     dispatch({
       loading: true,
     });
-    const promise = customerQuery(...params);
+    const promise = asyncMethod(...params);
     promise.then(
       res => {
         if (!didCancel.current) {
@@ -62,14 +62,14 @@ const usePromiseCall = <T = any, K = any>(
     );
   };
   let params;
-  if (typeof requestQuery === 'function') {
+  if (typeof parameters === 'function') {
     try {
-      params = requestQuery();
+      params = parameters();
     } catch (err) {
       params = errorSymbol;
     }
   } else {
-    params = requestQuery;
+    params = parameters;
   }
 
   paramsRef.current = params;
