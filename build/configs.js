@@ -23,6 +23,11 @@ const configs = {
   },
 }
 
+const compressPlugins = {
+  cjs: uglify,
+  es: terser
+}
+
 function genConfig (opts) {
   const config = {
     input: {
@@ -46,19 +51,12 @@ function genConfig (opts) {
       exports: 'named',
     }
   }
-
-  if ( opts.env === 'production' && opts.format === 'cjs' ) {
+  const method = compressPlugins[opts.format]
+  if ( opts.env === 'production' && method ) {
     config.input.plugins.push(
-      uglify()
+      method()
     )
   }
-
-  if ( opts.env === 'production' && opts.format === 'es' ) {
-    config.input.plugins.push(
-      terser()
-    )
-  }
-
   return config
 }
 
