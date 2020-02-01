@@ -1,8 +1,13 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
+
 const errorSymbol = Symbol()
 
 export interface usePromiseCallOptions {
   interval?: number
+}
+
+function getParamArray(params: any) {
+  return Array.isArray(params) ? params : [params];
 }
 
 const usePromiseCall = <T = any, K = any>(
@@ -37,7 +42,7 @@ const usePromiseCall = <T = any, K = any>(
   );
   const paramsRef = useRef();
   const load = (requestParams: any) => {
-    const params = Array.isArray(requestParams) ? requestParams : [requestParams];
+    const params = getParamArray(requestParams);
     dispatch({
       loading: true,
     });
@@ -85,6 +90,9 @@ const usePromiseCall = <T = any, K = any>(
   };
   useEffect(() => {
     revalidate();
+  }, getParamArray(params));
+
+  useEffect(() => {
     return () => {
       didCancel.current = true;
     };

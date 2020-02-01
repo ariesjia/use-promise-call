@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import render, { act } from 'hooks-test-util'
 import usePromiseCall from '../index'
 
@@ -115,7 +115,7 @@ describe("usePromiseCall test",() => {
     })
     expect(query).toBeCalledWith(parameter);
   })
-  it('should suport dependent promise', async () => {
+  it('should support dependent promise', async () => {
     const product = {
       id: 1,
       name: 'product name'
@@ -137,5 +137,32 @@ describe("usePromiseCall test",() => {
     })
     expect(query1).toBeCalledWith('id');
     expect(query2).toBeCalledWith(product.id);
+  })
+  it('should run async method when dependency parameters is change', async () => {
+    const getProducts = jest.fn().mockResolvedValue(null)
+    const productId = 'id';
+    const { container } = render(() => {
+      const [query, setQuery] = useState('')
+      const call = usePromiseCall(
+        getProducts,
+        [productId, query]
+      )
+      return {
+        call,
+        setQuery
+      }
+    })
+    expect(getProducts).toBeCalledWith(productId, "");
+    await act(async () => {
+      await flushPromises();
+    })
+    act(() => {
+      container.hook.setQuery('name')
+    })
+    expect(getProducts).toHaveBeenCalledTimes(2);
+    expect(getProducts).toHaveBeenNthCalledWith(2, productId, "name");
+    await act(async () => {
+      await flushPromises();
+    })
   })
 })
