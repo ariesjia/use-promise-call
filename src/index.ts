@@ -2,30 +2,34 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 
 const errorSymbol = Symbol()
 
-export interface usePromiseCallOptions {
+export interface usePromiseCallOptions<T> {
   interval?: number
+  initial?: Partial<T>
 }
 
 function getParamArray(params: any) {
   return Array.isArray(params) ? params : [params];
 }
 
+interface State<T, K>  {
+  loading: boolean;
+  data: T | Partial<T> | null;
+  error: K | null;
+}
+
 const usePromiseCall = <T = any, K = any>(
   asyncMethod: (...args: any[]) => Promise<any>,
   parameters?: any,
-  options?: usePromiseCallOptions
+  options: usePromiseCallOptions<T> = {}
 ) => {
-  const { interval = 100 } = options || {}
+  const { interval = 100, initial } = options
   const didCancel = useRef(false);
-  const stateRef = useRef<{
-    loading: boolean;
-    data: T | null;
-    error: K | null;
-  }>({
-    data: null,
+  const initialValue: State<T, K> = {
+    data:  initial ? initial : null,
     error: null,
     loading: false,
-  });
+  };
+  const stateRef = useRef<State<T, K>>(initialValue);
   const rerender = useState<{}>({})[1];
   const dispatch = useCallback(
     payload => {
@@ -88,6 +92,7 @@ const usePromiseCall = <T = any, K = any>(
       }, interval);
     }
   };
+
   useEffect(() => {
     revalidate();
   }, getParamArray(params));
@@ -99,13 +104,13 @@ const usePromiseCall = <T = any, K = any>(
   }, []);
 
   return {
-    get data() : T | null{
+    get data() : typeof initialValue['data'] {
       return stateRef.current.data;
     },
-    get loading() : boolean {
+    get loading() : typeof initialValue['loading'] {
       return stateRef.current.loading;
     },
-    get error() : K | null {
+    get error() : typeof initialValue['error'] {
       return stateRef.current.error;
     },
     reload: (reloadQuery: any = paramsRef.current) => load(reloadQuery),

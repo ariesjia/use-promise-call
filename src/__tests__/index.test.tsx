@@ -11,6 +11,7 @@ function flushTimeout(time = 100) {
 }
 
 describe("usePromiseCall test",() => {
+
   it('should update loading status when component mount', async () => {
     const query = jest.fn().mockResolvedValue(null)
     const { container } = render(() => {
@@ -26,6 +27,20 @@ describe("usePromiseCall test",() => {
     expect(query).toBeCalledWith('id');
     expect(container.hook.loading).toBe(false)
   })
+
+  it('should use initial value as initial data', async () => {
+    const query = jest.fn().mockResolvedValue(null)
+    const initial = 'initial'
+    const { container } = render(() => {
+      return usePromiseCall(
+        query, [], {
+          initial
+        }
+      )
+    })
+    expect(container.hook.data).toBe(initial)
+  })
+
   it('should set data when promise success', async () => {
     const result = {
       data: 'data'
