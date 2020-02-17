@@ -5,6 +5,7 @@ const errorSymbol = Symbol()
 export interface usePromiseCallOptions<T> {
   interval?: number
   initial?: Partial<T>
+  manual?: boolean
 }
 
 function getParamArray(params: any) {
@@ -22,10 +23,10 @@ const usePromiseCall = <T = any, K = any>(
   parameters?: any,
   options: usePromiseCallOptions<T> = {}
 ) => {
-  const { interval = 100, initial } = options
+  const { interval = 100, initial, manual } = options
   const didCancel = useRef(false);
   const initialValue: State<T, K> = {
-    data:  initial ? initial : null,
+    data: initial || null,
     error: null,
     loading: false,
   };
@@ -38,7 +39,7 @@ const usePromiseCall = <T = any, K = any>(
       keys.forEach(key => {
         stateRef.current[key] = payload[key];
       });
-      if (shouldUpdateState) {
+      if (shouldUpdateState && !didCancel.current) {
         rerender({});
       }
     },
@@ -53,20 +54,16 @@ const usePromiseCall = <T = any, K = any>(
     const promise = asyncMethod(...params);
     promise.then(
       res => {
-        if (!didCancel.current) {
-          dispatch({
-            data: res,
-            loading: false,
-          });
-        }
+        dispatch({
+          data: res,
+          loading: false,
+        });
       },
       err => {
-        if (!didCancel.current) {
-          dispatch({
-            error: err,
-            loading: false,
-          });
-        }
+        dispatch({
+          error: err,
+          loading: false,
+        });
       },
     );
   };
@@ -94,7 +91,9 @@ const usePromiseCall = <T = any, K = any>(
   };
 
   useEffect(() => {
-    revalidate();
+    if(!manual) {
+      revalidate();
+    }
   }, getParamArray(params));
 
   useEffect(() => {
@@ -104,7 +103,7 @@ const usePromiseCall = <T = any, K = any>(
   }, []);
 
   return {
-    get data() : typeof initialValue['data'] {
+    get data(): typeof stateRef.current.data {
       return stateRef.current.data;
     },
     get loading() : typeof initialValue['loading'] {
@@ -114,6 +113,7 @@ const usePromiseCall = <T = any, K = any>(
       return stateRef.current.error;
     },
     reload: (reloadQuery: any = paramsRef.current) => load(reloadQuery),
+    run: (runQuery: any = paramsRef.current) => load(runQuery),
   };
 };
 

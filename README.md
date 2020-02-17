@@ -26,8 +26,16 @@ npm install use-promise-call
   * `parameters`: The initial parameters to asyncMethod, or function to get initial parameters
      
   * `options`: config
-     
-     default : `{ interval = 100 }`
+    
+    * `manual`: 
+    
+       default: false
+       
+    *  `initial`：
+    
+        default: null
+        
+    default : `{ interval = 100 }`
      
 ### result
 * `data`: promise resolve value

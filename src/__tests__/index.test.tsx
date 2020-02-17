@@ -180,4 +180,26 @@ describe("usePromiseCall test",() => {
       await flushPromises();
     })
   })
+
+  it('should set loading when excute reload method', async () => {
+    const query = jest.fn().mockResolvedValue(null)
+    const { container } = render(() => {
+      return usePromiseCall(
+        query,
+        [],
+        { manual:true }
+      )
+    })
+    expect(query).not.toHaveBeenCalled();
+    await act(async () => {
+      await flushPromises();
+    })
+    act(() => {
+      container.hook.run('id')
+    })
+    await act(async () => {
+      await flushPromises();
+    })
+    expect(query).toHaveBeenCalledWith('id');
+  })
 })
