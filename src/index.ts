@@ -23,10 +23,10 @@ const usePromiseCall = <T = any, K = any>(
   parameters?: any,
   options: usePromiseCallOptions<T> = {}
 ) => {
-  const { interval = 100, initial, manual } = options
+  const { interval = 100, initial = null, manual } = options
   const didCancel = useRef(false);
   const initialValue: State<T, K> = {
-    data: initial || null,
+    data: initial,
     error: null,
     loading: false,
   };
@@ -113,7 +113,13 @@ const usePromiseCall = <T = any, K = any>(
       return stateRef.current.error;
     },
     reload: (reloadQuery: any = paramsRef.current) => load(reloadQuery),
-    run: (runQuery: any = paramsRef.current) => load(runQuery),
+    run: (runQuery: any = paramsRef.current) => {
+      if(manual) {
+        load(runQuery)
+      } else {
+        console.warn("use-promise-call: run method should set manual to true")
+      }
+    },
   };
 };
 

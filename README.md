@@ -27,11 +27,11 @@ npm install use-promise-call
      
   * `options`: config
     
-    * `manual`: 
+    * `manual`: boolean flag to manual trigger async method 
     
        default: false
        
-    *  `initial`：
+    *  `initial`：initial data value
     
         default: null
         
@@ -42,6 +42,7 @@ npm install use-promise-call
 * `error`: promise reject value
 * `loading`: status of async method  
 * `reload(parameters?)`: method of re-run async method
+* `run(parameters?)`: method of manual trigger async method
 
 ## Demo
 
