@@ -66,6 +66,7 @@ const usePromiseCall = <T = any, K = any>(
         });
       },
     );
+    return promise
   };
   let params;
   if (typeof parameters === 'function') {
@@ -115,9 +116,9 @@ const usePromiseCall = <T = any, K = any>(
     reload: (reloadQuery: any = paramsRef.current) => load(reloadQuery),
     run: (runQuery: any = paramsRef.current) => {
       if(manual) {
-        load(runQuery)
+        return load(runQuery)
       } else {
-        console.warn("use-promise-call: run method should set manual to true")
+        return Promise.reject("use-promise-call: run method should set manual to true")
       }
     },
   };
