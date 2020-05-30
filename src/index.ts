@@ -56,6 +56,7 @@ const usePromiseCall = <T = any, K = any>(
       res => {
         dispatch({
           data: res,
+          error: null,
           loading: false,
         });
       },
