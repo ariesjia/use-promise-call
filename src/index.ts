@@ -49,6 +49,7 @@ const usePromiseCall = <T = any, K = any>(
   const load = (requestParams: any) => {
     const params = getParamArray(requestParams);
     dispatch({
+      error: null,
       loading: true,
     });
     const promise = asyncMethod(...params);
@@ -56,7 +57,6 @@ const usePromiseCall = <T = any, K = any>(
       res => {
         dispatch({
           data: res,
-          error: null,
           loading: false,
         });
       },
