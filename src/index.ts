@@ -25,6 +25,7 @@ const usePromiseCall = <T = any, K = any>(
 ) => {
   const { interval = 100, initial = null, manual } = options
   const didCancel = useRef(false);
+  const lastCall = useRef<number>(0);
   const initialValue: State<T, K> = {
     data: initial,
     error: null,
@@ -47,6 +48,8 @@ const usePromiseCall = <T = any, K = any>(
   );
   const paramsRef = useRef();
   const load = (requestParams: any) => {
+    lastCall.current += 1;
+    const callNumber = lastCall.current;
     const params = getParamArray(requestParams);
     dispatch({
       error: null,
@@ -55,16 +58,20 @@ const usePromiseCall = <T = any, K = any>(
     const promise = asyncMethod(...params);
     promise.then(
       res => {
-        dispatch({
-          data: res,
-          loading: false,
-        });
+        if(callNumber === lastCall.current) {
+          dispatch({
+            data: res,
+            loading: false,
+          });
+        }
       },
       err => {
-        dispatch({
-          error: err,
-          loading: false,
-        });
+        if(callNumber === lastCall.current) {
+          dispatch({
+            error: err,
+            loading: false,
+          });
+        }
       },
     );
     return promise

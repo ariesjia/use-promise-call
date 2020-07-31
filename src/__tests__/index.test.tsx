@@ -180,7 +180,6 @@ describe("usePromiseCall test",() => {
       await flushPromises();
     })
   })
-
   it('should set loading when excute reload method', async () => {
     const query = jest.fn().mockResolvedValue(null)
     const { container } = render(() => {
@@ -197,9 +196,42 @@ describe("usePromiseCall test",() => {
     act(() => {
       container.hook.run('id')
     })
+    expect(container.hook.loading).toBeTruthy();
     await act(async () => {
       await flushPromises();
     })
-    expect(query).toHaveBeenCalledWith('id');
+    expect(container.hook.loading).toBeFalsy();
+  })
+  it('should handle promise race', async () => {
+    let called = false;
+    let count = 0;
+    const query = jest.fn().mockImplementation(() => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(++count)
+        }, called ? 100 : 200)
+      })
+    })
+    const { container } = render(() => {
+      return usePromiseCall(
+        query,
+        [],
+        { manual:true }
+      )
+    })
+    act(() => {
+      container.hook.run()
+      container.hook.run()
+    })
+    await act(async () => {
+      await flushTimeout(100);
+    })
+    expect(container.hook.data).toEqual(null);
+    expect(container.hook.loading).toBeTruthy();
+    await act(async () => {
+      await flushTimeout(100);
+    })
+    expect(container.hook.data).toEqual(2);
+    expect(container.hook.loading).toBeFalsy();
   })
 })
