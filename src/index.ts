@@ -37,9 +37,7 @@ const usePromiseCall = <T = any, K = any>(
     payload => {
       const keys = Object.keys(payload);
       const shouldUpdateState = !!keys.length
-      keys.forEach(key => {
-        stateRef.current[key] = payload[key];
-      });
+      Object.assign(stateRef.current, payload)
       if (shouldUpdateState && !didCancel.current) {
         rerender({});
       }
